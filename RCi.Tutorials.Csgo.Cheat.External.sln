@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.757
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial 001 - Process Hook", "Tutorial 001 - Process Hook\Tutorial 001 - Process Hook.csproj", "{38E14C7B-E232-4B4E-9E71-7B875BF7A8F3}"
 EndProject
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial 010 - Aim Bot (Asy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial 011 - Global Hook", "Tutorial 011 - Global Hook\Tutorial 011 - Global Hook.csproj", "{20CCDE9B-1545-4672-BC15-AEC9937E89ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorial 012 - Aim Bot (Sync)", "Tutorial 012 - Aim Bot (Sync)\Tutorial 012 - Aim Bot (Sync).csproj", "{93ECF242-B6E8-4489-8E17-ABA022C930B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "final", "Tutorial 012 - Aim Bot (Sync)\final.csproj", "{93ECF242-B6E8-4489-8E17-ABA022C930B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

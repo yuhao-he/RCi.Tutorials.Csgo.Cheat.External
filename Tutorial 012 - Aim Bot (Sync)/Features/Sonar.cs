@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
+using System.Diagnostics;
+using System.Media;
 using System.Threading;
-using Microsoft.DirectX;
 using RCi.Tutorials.Csgo.Cheat.External.Data;
 using RCi.Tutorials.Csgo.Cheat.External.Data.Internal;
 using RCi.Tutorials.Csgo.Cheat.External.Gfx.Math;
 using RCi.Tutorials.Csgo.Cheat.External.Sys.Data;
 using RCi.Tutorials.Csgo.Cheat.External.Utils;
-using Point = System.Drawing.Point;
 
 namespace RCi.Tutorials.Csgo.Cheat.External.Features
 {
     /// <summary>
     /// Trigger bot. Shoots when hovering over an enemy.
     /// </summary>
-    public class TriggerBot :
+    public class Sonar :
         ThreadedComponent
     {
         #region // storage
 
         /// <inheritdoc />
-        protected override string ThreadName => nameof(TriggerBot);
+        protected override string ThreadName => nameof(Sonar);
 
         /// <inheritdoc cref="GameProcess"/>
         private GameProcess GameProcess { get; set; }
@@ -28,16 +27,20 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
         /// <inheritdoc cref="GameData"/>
         private GameData GameData { get; set; }
 
-        private double AnglePerPixel { get; set; } = 0.00057596609244744;
+        /// <inheritdoc cref="GameConsole"/>
+        private GameConsole GameConsole { get; set; }
+
+        private bool toggle = true;
         #endregion
 
         #region // ctor
 
         /// <summary />
-        public TriggerBot(GameProcess gameProcess, GameData gameData)
+        public Sonar(GameProcess gameProcess, GameData gameData, GameConsole gc)
         {
             GameProcess = gameProcess;
             GameData = gameData;
+            GameConsole = gc;
         }
 
         /// <inheritdoc />
@@ -53,28 +56,30 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
 
         #region // routines
 
-        /// <summary>
-        /// Is trigger bot hot key down?
-        /// </summary>
-        public static bool IsHotKeyDown()
-        {
-            // return WindowsVirtualKey.VK_MBUTTON.IsKeyDown();
-            return WindowsVirtualKey.VK_XBUTTON2.IsKeyDown();
-        }
 
         /// <inheritdoc />
         protected override void FrameAction()
         {
-            if (!GameProcess.IsValid || !IsHotKeyDown())
+            if (!GameProcess.IsValid)
             {
                 return;
             }
 
-
-            if (!GameData.UseTriggerBot) {
+            if (!GameData.UseSonar) {
                 return;
             }
 
+            if (WindowsVirtualKey.VK_NUMPAD1.IsKeyDown())
+            {
+                Console.Beep();
+                toggle = !toggle;
+            }
+            else if (WindowsVirtualKey.VK_NUMPAD2.IsKeyDown()) {
+                toggle = !toggle;
+            }
+            if (!toggle) {
+                return;
+            }
 
             // get aim ray in world
             var player = GameData.Player;
@@ -87,26 +92,21 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
             // go through entities
             foreach (var entity in GameData.Entities)
             {
-                if (!entity.IsAlive() /* || !entity.Spotted */ || entity.AddressBase == player.AddressBase || entity.Team == GameData.Player.Team)
+                if (!entity.IsAlive() || entity.AddressBase == player.AddressBase || entity.Team == GameData.Player.Team)
                 {
                     continue;
                 }
-
                 // check if aim ray intersects any hitboxes of entity
                 var hitBoxId = IntersectsHitBox(aimRayWorld, entity);
                 if (hitBoxId >= 0)
-                // if (checkWantBones(hitBoxId))
                 {
-                    // shoot
-                    U.MouseLeftDown();
-                    U.MouseLeftUp();
-                    Thread.Sleep(5);
+                    // TODO: Play music
+                    // Program.GameConsole.SendCommand(@"play ui\beep07;");
+                    // GameConsole.SendCommand("play ui/beep07;");
+                    System.Console.Beep();
+                    Thread.Sleep(50);
                 }
             }
-        }
-
-        public static bool checkWantBones(int hitBoxId) {
-            return hitBoxId >= 0 && (hitBoxId <= 8 || hitBoxId >= 70);
         }
 
         /// <summary>

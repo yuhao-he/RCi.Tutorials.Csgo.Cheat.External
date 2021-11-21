@@ -25,6 +25,9 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
         /// </summary>
         public bool Dormant { get; private set; } = true;
 
+
+        public bool Spotted { get; private set; } = false;
+
         /// <summary>
         /// Pointer to studio hrd.
         /// </summary>
@@ -87,7 +90,8 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
         /// <inheritdoc />
         protected override IntPtr ReadAddressBase(GameProcess gameProcess)
         {
-            return gameProcess.ModuleClient.Read<IntPtr>(Offsets.dwEntityList + Index * 0x10 /* size */);
+            var ptr = gameProcess.ModuleClient.Read<IntPtr>(Offsets.dwEntityList + Index * 0x10 /* size */);
+            return ptr;
         }
 
         /// <inheritdoc />
@@ -99,6 +103,7 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
             }
 
             Dormant = gameProcess.Process.Read<bool>(AddressBase + Offsets.m_bDormant);
+            Spotted = gameProcess.Process.Read<bool>(AddressBase + Offsets.m_bSpotted);
             if (!IsAlive())
             {
                 return true;

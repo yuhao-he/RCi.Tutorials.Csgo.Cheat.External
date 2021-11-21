@@ -17,7 +17,7 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data
 
         private const string NAME_PROCESS = "csgo";
 
-        private const string NAME_MODULE_CLIENT = "client_panorama.dll";
+        private const string NAME_MODULE_CLIENT = "client.dll";
 
         private const string NAME_MODULE_ENGINE = "engine.dll";
 
@@ -97,7 +97,7 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data
             {
                 InvalidateWindow();
             }
-
+            
             Console.WriteLine(IsValid
                 ? $"0x{(int)Process.Handle:X8} {WindowRectangleClient.X} {WindowRectangleClient.Y} {WindowRectangleClient.Width} {WindowRectangleClient.Height}"
                 : "Game process invalid");

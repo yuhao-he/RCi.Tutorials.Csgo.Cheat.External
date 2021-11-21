@@ -24,6 +24,13 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data
         /// <inheritdoc cref="Entity"/>
         public Entity[] Entities { get; private set; }
 
+
+        public bool ShowGraphics = true;
+        public float Smoothing { get; set; }
+        public float FOV { get; set; }
+        public bool UseTriggerBot = true;
+        public bool UseSonar = true;
+
         #endregion
 
         #region // ctor
@@ -34,6 +41,10 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data
             GameProcess = gameProcess;
             Player = new Player();
             Entities = Enumerable.Range(0, 64).Select(index => new Entity(index)).ToArray();
+
+            // parameters
+            Smoothing = 7.0f;
+            FOV = 2.0f;
         }
 
         /// <inheritdoc />

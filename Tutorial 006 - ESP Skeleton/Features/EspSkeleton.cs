@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using RCi.Tutorials.Csgo.Cheat.External.Data.Internal;
 using RCi.Tutorials.Csgo.Cheat.External.Data.Raw;
 using RCi.Tutorials.Csgo.Cheat.External.Gfx;
@@ -16,6 +17,7 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
         /// </summary>
         public static void Draw(Graphics graphics)
         {
+            int i = 0;
             foreach (var entity in graphics.GameData.Entities)
             {
                 // validate
@@ -23,7 +25,6 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
                 {
                     continue;
                 }
-
                 // draw
                 var color = entity.Team == Team.Terrorists ? Color.Gold : Color.DodgerBlue;
                 Draw(graphics, entity, color);

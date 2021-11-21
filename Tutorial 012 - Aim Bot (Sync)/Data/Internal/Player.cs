@@ -63,6 +63,9 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
         /// </summary>
         public int Fov { get; private set; }
 
+        public int ActiveWeaponID { get; private set; }
+
+
         #endregion
 
         #region // routines
@@ -70,7 +73,8 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
         /// <inheritdoc />
         protected override IntPtr ReadAddressBase(GameProcess gameProcess)
         {
-            return gameProcess.ModuleClient.Read<IntPtr>(Offsets.dwLocalPlayer);
+            IntPtr res = gameProcess.ModuleClient.Read<IntPtr>(Offsets.dwLocalPlayer);
+            return res;
         }
 
         /// <inheritdoc />
@@ -91,7 +95,17 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Data.Internal
             EyePosition = Origin + ViewOffset;
             ViewAngles = gameProcess.Process.Read<Vector3>(gameProcess.ModuleEngine.Read<IntPtr>(Offsets.dwClientState) + Offsets.dwClientState_ViewAngles);
             AimPunchAngle = gameProcess.Process.Read<Vector3>(AddressBase + Offsets.m_aimPunchAngle);
-            Fov = gameProcess.Process.Read<int>(AddressBase + Offsets.m_iFOV);
+            Fov = gameProcess.Process.Read<int>(AddressBase + Offsets.m_iDefaultFOV);
+
+            // Console.WriteLine("Health" + gameProcess.Process.Read<int>(AddressBase + Offsets.m_iHealth) + " " + AddressBase + " " + Offsets.dwLocalPlayer + " " + Fov);
+
+            // read active weapon
+            int wepptr = gameProcess.Process.Read<int>(AddressBase + Offsets.m_hActiveWeapon);
+            int weaponEntId = wepptr & 0xfff;
+            // int weaponEnt = gameProcess.Process.Read<int>(gameProcess.ModuleClient.Read<IntPtr>(Offsets.dwClientState) + Offsets.dwEntityList + (weaponEntId - 1) * 0x10);
+            int weaponEnt = gameProcess.ModuleClient.Read<int>(Offsets.dwEntityList + (weaponEntId - 1) * 0x10);
+            ActiveWeaponID = gameProcess.Process.Read<int>((IntPtr)(weaponEnt + Offsets.m_iItemDefinitionIndex));
+
             if (Fov == 0) Fov = 90; // correct for default
 
             // calc data

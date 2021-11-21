@@ -138,10 +138,13 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Gfx
         /// </summary>
         private void Render()
         {
-            DrawWindowBorder();
-            DrawFps();
-            EspAimCrosshair.Draw(this);
-            EspSkeleton.Draw(this);
+            if (GameData.ShowGraphics) {
+                DrawWindowBorder();
+                DrawFps();
+                EspAimCrosshair.Draw(this);
+            }
+
+            // EspSkeleton.Draw(this);
             //EspHitBoxes.Draw(this);
         }
 

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.DirectX;
 using RCi.Tutorials.Csgo.Cheat.External.Data;
+using RCi.Tutorials.Csgo.Cheat.External.Data.Internal;
 using RCi.Tutorials.Csgo.Cheat.External.Gfx.Math;
 using RCi.Tutorials.Csgo.Cheat.External.Sys;
 using RCi.Tutorials.Csgo.Cheat.External.Sys.Data;
@@ -29,16 +31,12 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
         /// </summary>
         private const int AimBoneId = 8;
 
-        /// <summary>
-        /// Aim bot field of view (fov) to find targets (in radians).
-        /// </summary>
-        private static float AimBotFov { get; set; } = 10f.DegreeToRadian();
 
         /// <summary>
         /// Parameter to control smoothness of aim bot [1..N].
         /// 1 = no smoothing, bigger number - more smoothing
         /// </summary>
-        private float AimBotSmoothing { get; set; } = 3;
+        private float AimBotSmoothing { get; set; } = 1;
 
         /// <inheritdoc />
         protected override string ThreadName => nameof(AimBot);
@@ -62,13 +60,21 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
         /// <inheritdoc cref="AimBotState"/>
         private AimBotState State { get; set; }
 
+        private bool friendlyFire;
+
+        /// <summary>
+        /// Aim bot field of view (fov) to find targets (in radians).
+        /// </summary>
+        private static float AimBotFov { get; set; } = 10.0f.DegreeToRadian();
+        private static readonly float sensitivity = 5f;
         #endregion
 
         #region // ctor
 
         /// <summary />
-        public AimBot(GameProcess gameProcess, GameData gameData)
+        public AimBot(GameProcess gameProcess, GameData gameData, bool ff)
         {
+            friendlyFire = ff;
             GameProcess = gameProcess;
             GameData = gameData;
             MouseHook = new GlobalHook(HookType.WH_MOUSE_LL, MouseHookCallback);
@@ -137,6 +143,11 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
             return true;
         }
 
+        public static bool IsHotKeyDown()
+        {
+            return WindowsVirtualKey.K_N.IsKeyDown();
+        }
+
         /// <inheritdoc />
         protected override void FrameAction()
         {
@@ -194,20 +205,25 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
             var minAngleSize = float.MaxValue;
             aimAngles = new Vector2((float)Math.PI, (float)Math.PI);
             var targetFound = false;
-
             foreach (var entity in GameData.Entities)
             {
                 // validate
-                if (!entity.IsAlive() || entity.AddressBase == GameData.Player.AddressBase)
+                if (!entity.IsAlive() || entity.AddressBase == GameData.Player.AddressBase || !entity.Spotted)
+                {
+                    continue;
+                }
+                else if (!friendlyFire && entity.Team == GameData.Player.Team)
                 {
                     continue;
                 }
 
                 // get angle to bone
                 GetAimAngles(entity.BonesPos[AimBoneId], out var angleToBoneSize, out var anglesToBone);
+                // Console.WriteLine("???" + angleToBoneSize + " !!!" + anglesToBone + "; " + GameData.FOV + ", " + GameData.FOV.DegreeToRadian() + "; " + entity.Health);
 
                 // let it only be inside fov search space
-                if (angleToBoneSize > AimBotFov)
+                float rad = GameData.FOV.DegreeToRadian();
+                if (angleToBoneSize > rad)
                 {
                     continue;
                 }
@@ -224,10 +240,14 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
             // smooth angles
             if (targetFound)
             {
-                aimAngles *= 1 / Math.Max(AimBotSmoothing, 1);
+                aimAngles *= 1 / Math.Max(AimBotSmoothing, 5);
             }
 
             return targetFound;
+        }
+
+        private bool isScope() {
+            return GameData.Player.ActiveWeaponID == 262153;
         }
 
         /// <summary>
@@ -254,6 +274,8 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Features
         private void GetAimPixels(Vector2 aimAngles, out Point aimPixels)
         {
             var fovRatio = 90.0 / GameData.Player.Fov;
+
+            // Console.WriteLine(aimAngles.X + " " + aimAngles.X/AnglePerPixel + " " + aimAngles.X / AnglePerPixel * fovRatio + " " + GameData.Player.Fov);
             aimPixels = new Point
             (
                 (int)Math.Round(aimAngles.X / AnglePerPixel * fovRatio),

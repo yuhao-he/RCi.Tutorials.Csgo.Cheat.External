@@ -140,8 +140,8 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Gfx
         {
             DrawWindowBorder();
             DrawFps();
-            EspAimCrosshair.Draw(this);
-            EspSkeleton.Draw(this);
+            //EspAimCrosshair.Draw(this);
+            //EspSkeleton.Draw(this);
             //EspHitBoxes.Draw(this);
         }
 

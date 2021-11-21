@@ -1,6 +1,7 @@
 ﻿using Microsoft.DirectX;
 using RCi.Tutorials.Csgo.Cheat.External.Gfx;
 using RCi.Tutorials.Csgo.Cheat.External.Utils;
+using System;
 
 namespace RCi.Tutorials.Csgo.Cheat.External.Features
 {

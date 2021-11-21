@@ -127,5 +127,10 @@ namespace RCi.Tutorials.Csgo.Cheat.External.Sys
         /// </summary>
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool UnhookWindowsHookEx(IntPtr hInstance);
+
+
+        [DllImport("user32.dll")]
+        public static extern ushort MapVirtualKey(KeyCode uCode, uint uMapType);
+
     }
 }
